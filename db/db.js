@@ -2,7 +2,7 @@
 
 const url = 'mongodb://127.0.0.1:27017/eleme';
 var mongoose = require('mongoose');
-mongoose.connect(url, { useMongoClient: true });
+mongoose.connect(url, { useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 
 const db = mongoose.connection;

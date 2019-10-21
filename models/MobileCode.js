@@ -14,7 +14,10 @@ const MobileCodeSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  userDate: Date,
+  usedDate: {
+    type: Date,
+    default: null,
+  },
 }, { timestamps: true });
 
 const MobileCode = mongoose.model('MobileCode', MobileCodeSchema);

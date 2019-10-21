@@ -19,7 +19,7 @@ function sendMobileCode(req, res, next) {
     });
   }
   MobileCode.findOne({
-    name: mobile,
+    mobile,
     used: false,
     createdAt: {
       "$gt": new Date(`${moment().format('YYYY-MM-DD')} 00:00:00`),
@@ -34,16 +34,16 @@ function sendMobileCode(req, res, next) {
         });
         return mobileCode.save();
       }
-      return { code: res};
+      return res;
     },
     err => {
       return Promise.reject(err);
     }
   ).then(
-    res => {
+    result => {
       res.json({
         status: 1,
-        code: res.code,
+        code: result.code,
       });
     },
     err => {

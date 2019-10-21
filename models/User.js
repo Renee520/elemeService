@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var moment = require('moment');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -17,6 +18,10 @@ const userSchema = new Schema({
   latitude: {
     type: String,
     default: '0',
+  },
+  createDate: {
+    type: String,
+    default: moment().format('YYYY-MM-DD HH:mm:ss'),
   },
   // date: {
   //   type: Date,
