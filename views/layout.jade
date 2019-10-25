@@ -2,6 +2,21 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/css/bootstrap.css')
+    link(rel='stylesheet', href='/css/style.css')
   body
+    .container-fluid
+      .collapse.navbar-collapse
+        nav.navbar-default
+          .container
+            ul.nav.navbar-nav
+              li.active
+                a(href='/portal/user')
+                  | 用户 
+              li
+                a(href='#') 店铺
+
     block content
+    script(src="/js/jquery-3.4.1.min.js")
+    script(src="/js/bootstrap.min.js")
+    script(src="/js/main.js")
