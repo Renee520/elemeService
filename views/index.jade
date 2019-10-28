@@ -1,6 +1,18 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  p #{description}
+    //- .container
+    .navbar-header
+      button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#ele-navbar', aria-controls='bs-navbar', aria-expanded='false')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+    #ele-navbar.collapse.navbar-collapse
+      ul.nav.navbar-nav
+        li.active
+          a(href='/portal/user')
+            | 用户 
+        li
+          a(href='#') 店铺
+

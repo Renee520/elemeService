@@ -13,7 +13,6 @@ router.get('/', function(req, res, next) {
 });
 router.post('/sendCode', indexCtr.sendMobileCode);
 
-
 module.exports = function(app) {
   app.use('/', router);
   app.use('/user', usersRouter);

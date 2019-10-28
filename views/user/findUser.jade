@@ -1,0 +1,77 @@
+extends index
+
+block userContent
+  table#userTable(style="width: 100%;")
+    thead
+      //- tr
+      //-   th 问题
+      //-   th 发表人
+      //-   th 最后更新时间
+block scripts
+  script.
+    $(document).ready(function() {
+      $("#userTable").DataTable({
+        "pagingType": "full_numbers",
+        "language": {
+          "sProcessing": "处理中...",
+          "sLengthMenu": "显示 _MENU_ 项结果",
+          "sZeroRecords": "没有匹配结果",
+          "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+          "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+          "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+          "sInfoPostFix": "",
+          "sSearch": "搜索:",
+          "sUrl": "",
+          "sEmptyTable": "表中数据为空",
+          "sLoadingRecords": "载入中...",
+          "sInfoThousands": ",",
+          "oPaginate": {
+            "sFirst": "首页",
+            "sPrevious": "上页",
+            "sNext": "下页",
+            "sLast": "末页"
+          },
+          "oAria": {
+            "sSortAscending": ": 以升序排列此列",
+            "sSortDescending": ": 以降序排列此列"
+          },
+        },
+        ajax: {
+          url: "/portal/user/findUser",
+          dataSrc: function (result) {
+            if (result.status) {
+              return result.data;
+            }
+            return [];
+          }
+        },
+        //默认最后一列（最后更新时间）降序排列
+        order: [[ 3, "desc" ]],
+        columns: [
+          {
+            targets: 0,
+            data: "_id",
+            title: "id",
+          },
+          {
+            targets: 1,
+            data: 'name',
+            title: "昵称",
+          },
+          {
+            targets: 2,
+            data: "mobile",
+            title: "手机号",
+          },
+          {
+            targets: 3,
+            data: "createDate",
+            title: "创建时间",
+          },
+        ],
+        //- initComplete:function(){
+        //-   $("#toolbar").append("<a href='https://github.com/ssy341/datatables-cn/issues/new' " +
+        //-     "class='btn btn-primary btn-sm'>我也要提问</a>");
+        //- }
+      });
+    });

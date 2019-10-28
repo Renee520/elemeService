@@ -1,0 +1,14 @@
+extends index
+
+block shopContent
+  .container-fluid
+    .ele-header.text-right
+      button.btn.btn-default.btn-sm(type="button") 返回
+      button.btn.btn-primary.btn-sm(type="button") 保存
+    form.form-horizontal
+      .form-group
+        label.col-sm-2.control-label(for='inputEmail3') Email
+        .col-sm-10
+          input#inputEmail3.form-control(type='email', placeholder='Email')
+block script
+  script.

@@ -55,6 +55,11 @@ function sendMobileCode(req, res, next) {
   );
 };
 
+function test(req, res, next) {
+  res.json({status: 1});
+}
+
 module.exports = {
   sendMobileCode, // 发送验证码
+  test,
 };

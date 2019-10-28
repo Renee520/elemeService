@@ -4,19 +4,31 @@ html
     title= title
     link(rel='stylesheet', href='/css/bootstrap.css')
     link(rel='stylesheet', href='/css/style.css')
+    link(rel='stylesheet', href='//cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css')
   body
-    .container-fluid
-      .collapse.navbar-collapse
-        nav.navbar-default
-          .container
-            ul.nav.navbar-nav
-              li.active
-                a(href='/portal/user')
-                  | 用户 
-              li
-                a(href='#') 店铺
-
-    block content
+    #ele-container
+      #ele-sidebar
+        ul
+          li(data-id="user")
+            a(href='/portal/user') 用户
+          li(data-id="shop")
+            a(href='/portal/shop') 店铺
+      #ele-content
+        block content
     script(src="/js/jquery-3.4.1.min.js")
     script(src="/js/bootstrap.min.js")
+    script(src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js")
     script(src="/js/main.js")
+    script.
+      $(document).ready(function(){
+        const host = window.location.host;
+        const href = window.location.href;
+        const url = href.split(host)[1];
+        $('#ele-sidebar li').each(function() {
+          const id = $(this).data('id');
+          if (url.indexOf(id) >= 0) {
+            $(this).addClass('active')
+          }
+        })
+      });
+    block scripts
