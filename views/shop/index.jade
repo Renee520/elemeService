@@ -17,13 +17,12 @@ block content
           | 添加门店
   block shopContent
 block scripts
+  block script
   script.
-    console.log('11');
     $(document).ready(function(){
       const host = window.location.host;
       const href = window.location.href;
       const url = href.split(host)[1];
-      console.log(host, href, url)
       $('#ele-navbar li').each(function() {
         const id = $(this).data('id');
         if (url.indexOf(id) >= 0) {

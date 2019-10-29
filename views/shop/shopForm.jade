@@ -2,13 +2,154 @@ extends index
 
 block shopContent
   .container-fluid
-    .ele-header.text-right
-      button.btn.btn-default.btn-sm(type="button") 返回
-      button.btn.btn-primary.btn-sm(type="button") 保存
-    form.form-horizontal
-      .form-group
-        label.col-sm-2.control-label(for='inputEmail3') Email
-        .col-sm-10
-          input#inputEmail3.form-control(type='email', placeholder='Email')
+    form#shopForm.form-horizontal
+      .ele-form-header
+        .ele-form-header__btn.text-right
+          button.btn.btn-default.btn-sm.form-back(type="button") 返回
+          button.btn.btn-primary.btn-sm.form-save(type="submit") 保存
+        ul.nav.nav-tabs(role='tablist')
+          li.active(role='presentation')
+            a#base-tab(href='#base', role='tab', data-toggle='tab', aria-controls='base', aria-expanded='true') 基础设置
+          li(role='presentation')
+            a#other-tab(href='#other', role='tab', data-toggle='tab', aria-controls='other', aria-expanded='false') 其他设置
+        .tab-content
+          #base.tab-pane.fade.active.in(role='tabpanel', aria-labelledby='base-tab')
+            .ele-form
+              .form-group
+                label.col-sm-3.control-label.is-required(for='name') 名称
+                .col-sm-9
+                  input#name.form-control(type='text', placeholder='店铺名称', name="name", required)
+              .form-group
+                label.col-sm-3.control-label(for='isSend') 是否配送
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#isSend(type='checkbox', name="isSend")
+                    span
+              .form-group
+                label.col-sm-3.control-label(for='sendBasePrice') 起送价格
+                .col-sm-9
+                  input#sendBasePrice.form-control(type='number', name="sendBasePrice")
+              .form-group
+                label.col-sm-3.control-label(for='sendPrice') 配送费
+                .col-sm-9
+                  input#sendPrice.form-control(type='number', name="sendPrice")
+              .form-group
+                label.col-sm-3.control-label.is-required(for='perSpend') 人均消费
+                .col-sm-9
+                  input#perSpend.form-control(type='number', name="perSpend",required)
+              .form-group
+                label.col-sm-3.control-label(for='keyWord') 关键字
+                .col-sm-9
+                  input#keyWord.form-control(name="keyWord")
+              .form-group
+                label.col-sm-3.control-label.is-required(for='type') 快餐类型
+                .col-sm-9
+                  input#type.form-control(name="type",required)
+              .form-group
+                label.col-sm-3.control-label(for='description') 描述
+                .col-sm-9
+                  textarea#description.form-control(row="3", name="description")
+              .form-group
+                label.col-sm-3.control-label(for='promotionInfo') 公告
+                .col-sm-9
+                  textarea#promotionInfo.form-control(row="3", name="promotionInfo")
+              .form-group
+                label.col-sm-3.control-label.is-required(for='address') 地址
+                .col-sm-9
+                  input#address.form-control(name="address",required)
+          #other.tab-pane.fade(role='tabpanel', aria-labelledby='other-tab')
+            .ele-form
+              .form-group
+                label.col-sm-3.control-label(for='isBrand') 品牌商家
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#isBrand(type='checkbox', name="isBrand")
+                    span
+              .form-group
+                label.col-sm-3.control-label(for='isNewStore') 新店
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#isNewStore(type='checkbox', name="isNewStore")
+                    span
+              .form-group
+                label.col-sm-3.control-label(for='isFoodEnsure') 食安保
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#isFoodEnsure(type='checkbox', name="isFoodEnsure")
+                    span
+              .form-group
+                label.col-sm-3.control-label(for='isFNSpecialDelivery') 蜂鸟专送
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#isFNSpecialDelivery(type='checkbox', name="isFNSpecialDelivery")
+                    span
+              .form-group
+                label.col-sm-3.control-label(for='invoice') 开发票
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#invoice(type='checkbox', name="invoice")
+                    span
+              .form-group
+                label.col-sm-3.control-label(for='selfTake') 支持自取
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#selfTake(type='checkbox', name="selfTake")
+                    span
+              .form-group
+                label.col-sm-3.control-label(for='isPerfect') 口碑人气好店
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#isPerfect(type='checkbox', name="isPerfect")
+                    span
+              .form-group
+                label.col-sm-3.control-label(for='valid') 可用
+                .col-sm-9
+                  .ele-form--checkbox.form-control
+                    input#valid(type='checkbox', name="valid")
+                    span
 block script
+  script(src="/js/bootstrapValidator.min.js")
+  script(src="/js/zh_CN.js")
   script.
+    $(document).ready(function() {
+      $('#shopForm').bootstrapValidator({
+        fields: {
+          name: {
+            validators: {
+              stringLength: {
+                min: 2,
+                max: 18,
+                message: '店铺名称长度必须在6到18位之间',
+              },
+              //- remote: {
+              //-   url: 'remote.php',
+              //-   message: 'The username is not available'
+              //- },
+            }
+          }
+        },
+      }).on('success.form.bv', e => {
+        e.preventDefault();
+        $.post('/portal/shop/save', $('#shopForm').serializeObject(), function(result) {
+          if (!result.status) {
+
+          }
+        })
+      })
+      //- $("#shopForm").submit(function(ev){
+      //-   console.log('submit', ev);
+      //- });
+      //- $('button.form-save')[0].onclick = function() {
+      //-   //- $('#shopForm').submit();
+      //-   //- $('#shopForm').bootstrapValidator('validate');
+      //-   //- var bootstrapValidator = $("#shopForm").data('bootstrapValidator');
+      //-   //- bootstrapValidator.validate();
+      //-   //- console.log(bootstrapValidator.isValid());
+      //-   //- if(bootstrapValidator.isValid())
+      //-   //-   $("#shopForm").submit();
+      //-   //- else return;
+      //- }
+      $('button.form-back')[0].onclick = function() {
+        window.history.go(-1);
+      }
+    })
