@@ -4,6 +4,8 @@ block shopContent
   .container-fluid
     form#shopForm.form-horizontal
       .ele-form-header
+        - if (!shop.isNew)
+          input.hidden(name="id",value="#{shop._id}")
         .ele-form-header__btn.text-right
           button.btn.btn-default.btn-sm.form-back(type="button") 返回
           button.btn.btn-primary.btn-sm.form-save(type="submit") 保存
@@ -18,96 +20,96 @@ block shopContent
               .form-group
                 label.col-sm-3.control-label.is-required(for='name') 名称
                 .col-sm-9
-                  input#name.form-control(type='text', placeholder='店铺名称', name="name", required)
+                  input#name.form-control(type='text', value="#{shop.name || ''}", placeholder='店铺名称', name="name", required)
               .form-group
                 label.col-sm-3.control-label(for='isSend') 是否配送
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#isSend(type='checkbox', name="isSend")
+                    input#isSend(type='checkbox', checked=shop.isSend, name="isSend")
                     span
               .form-group
                 label.col-sm-3.control-label(for='sendBasePrice') 起送价格
                 .col-sm-9
-                  input#sendBasePrice.form-control(type='number', name="sendBasePrice")
+                  input#sendBasePrice.form-control(value="#{shop.sendBasePrice}", name="sendBasePrice")
               .form-group
                 label.col-sm-3.control-label(for='sendPrice') 配送费
                 .col-sm-9
-                  input#sendPrice.form-control(type='number', name="sendPrice")
+                  input#sendPrice.form-control(type='text', value="#{shop.sendPrice}", name="sendPrice")
               .form-group
                 label.col-sm-3.control-label.is-required(for='perSpend') 人均消费
                 .col-sm-9
-                  input#perSpend.form-control(type='number', name="perSpend",required)
+                  input#perSpend.form-control( value="#{shop.perSpend}" name="perSpend",required)
               .form-group
                 label.col-sm-3.control-label(for='keyWord') 关键字
                 .col-sm-9
-                  input#keyWord.form-control(name="keyWord")
+                  input#keyWord.form-control(name="keyWord",value="#{shop.keyWord.toString()}")
               .form-group
                 label.col-sm-3.control-label.is-required(for='type') 快餐类型
                 .col-sm-9
-                  input#type.form-control(name="type",required)
+                  input#type.form-control(name="type",required, value="#{shop.type.toString()}")
               .form-group
                 label.col-sm-3.control-label(for='description') 描述
                 .col-sm-9
-                  textarea#description.form-control(row="3", name="description")
+                  textarea#description.form-control(row="3", name="description") #{shop.description || ''}
               .form-group
                 label.col-sm-3.control-label(for='promotionInfo') 公告
                 .col-sm-9
-                  textarea#promotionInfo.form-control(row="3", name="promotionInfo")
+                  textarea#promotionInfo.form-control(row="3", name="promotionInfo") #{shop.promotionInfo || ''}
               .form-group
                 label.col-sm-3.control-label.is-required(for='address') 地址
                 .col-sm-9
-                  input#address.form-control(name="address",required)
+                  input#address.form-control(name="address",required, value="#{shop.address || ''}")
           #other.tab-pane.fade(role='tabpanel', aria-labelledby='other-tab')
             .ele-form
               .form-group
                 label.col-sm-3.control-label(for='isBrand') 品牌商家
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#isBrand(type='checkbox', name="isBrand")
+                    input#isBrand(type='checkbox', name="isBrand", checked=shop.isBrand)
                     span
               .form-group
                 label.col-sm-3.control-label(for='isNewStore') 新店
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#isNewStore(type='checkbox', name="isNewStore")
+                    input#isNewStore(type='checkbox', name="isNewStore", checked=shop.isNewStore)
                     span
               .form-group
                 label.col-sm-3.control-label(for='isFoodEnsure') 食安保
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#isFoodEnsure(type='checkbox', name="isFoodEnsure")
+                    input#isFoodEnsure(type='checkbox', name="isFoodEnsure", checked=shop.isFoodEnsure)
                     span
               .form-group
                 label.col-sm-3.control-label(for='isFNSpecialDelivery') 蜂鸟专送
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#isFNSpecialDelivery(type='checkbox', name="isFNSpecialDelivery")
+                    input#isFNSpecialDelivery(type='checkbox', name="isFNSpecialDelivery", checked=shop.isFNSpecialDelivery)
                     span
               .form-group
                 label.col-sm-3.control-label(for='invoice') 开发票
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#invoice(type='checkbox', name="invoice")
+                    input#invoice(type='checkbox', name="invoice", checked=shop.invoice)
                     span
               .form-group
                 label.col-sm-3.control-label(for='selfTake') 支持自取
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#selfTake(type='checkbox', name="selfTake")
+                    input#selfTake(type='checkbox', name="selfTake", checked=shop.selfTake)
                     span
               .form-group
                 label.col-sm-3.control-label(for='isPerfect') 口碑人气好店
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#isPerfect(type='checkbox', name="isPerfect")
+                    input#isPerfect(type='checkbox', name="isPerfect", checked=shop.isPerfect)
                     span
               .form-group
                 label.col-sm-3.control-label(for='valid') 可用
                 .col-sm-9
                   .ele-form--checkbox.form-control
-                    input#valid(type='checkbox', name="valid")
+                    input#valid(type='checkbox', checked=shop.valid===1 name="valid")
                     span
-block script
+block append scripts
   script(src="/js/bootstrapValidator.min.js")
   script(src="/js/zh_CN.js")
   script.
@@ -121,34 +123,66 @@ block script
                 max: 18,
                 message: '店铺名称长度必须在6到18位之间',
               },
-              //- remote: {
-              //-   url: 'remote.php',
-              //-   message: 'The username is not available'
-              //- },
+              remote: { // ajax校验，获得一个json数据（{'valid': true or false}）
+                url: '/portal/shop/checkName',       //验证地址
+                message: '店铺名重复',   //提示信息
+                type: 'post',          //请求方式
+                data: {
+                  name: function() {
+                    return $("input[name='name']").val();
+                  },
+                  id: function() {
+                    return $("input[name='id']").val()
+                  }
+                },
+                delay: 1000,
+              }
             }
-          }
+          },
+          sendPrice: {
+            validators: {
+              regexp: {
+                enabled: true,
+                regexp: /^[0-9\.]+$/,
+                message: '请输入数字'
+              }
+            }
+          },
+          perSpend: {
+            validators: {
+              regexp: {
+                enabled: true,
+                regexp: /^[0-9\.]+$/,
+                message: '请输入数字'
+              }
+            }
+          },
+          sendBasePrice: {
+            validators: {
+              regexp: {
+                enabled: true,
+                regexp: /^[0-9\.]+$/,
+                message: '请输入数字'
+              }
+            }
+          },
         },
       }).on('success.form.bv', e => {
         e.preventDefault();
         $.post('/portal/shop/save', $('#shopForm').serializeObject(), function(result) {
           if (!result.status) {
-
+            let msgHtml = `
+              <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>错误信息!</strong> ${result.msg || '未知错误'}
+              </div>
+            `;
+            $('#shopForm').append(msgHtml);
+          } else {
+            location.href = "/portal/shop/list";
           }
         })
       })
-      //- $("#shopForm").submit(function(ev){
-      //-   console.log('submit', ev);
-      //- });
-      //- $('button.form-save')[0].onclick = function() {
-      //-   //- $('#shopForm').submit();
-      //-   //- $('#shopForm').bootstrapValidator('validate');
-      //-   //- var bootstrapValidator = $("#shopForm").data('bootstrapValidator');
-      //-   //- bootstrapValidator.validate();
-      //-   //- console.log(bootstrapValidator.isValid());
-      //-   //- if(bootstrapValidator.isValid())
-      //-   //-   $("#shopForm").submit();
-      //-   //- else return;
-      //- }
       $('button.form-back')[0].onclick = function() {
         window.history.go(-1);
       }

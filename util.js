@@ -30,8 +30,20 @@ function checkboxValue(value, type = 'boolean') {
   return !!value;
 }
 
+// datatable 排序格式化查询
+function orderFormat(order, columns) {
+  let sort = {};
+  if (order && order.length) {
+    order.forEach(o => {
+      sort[columns[o.column].data] = o.dir;
+    });
+  }
+  return sort;
+}
+
 module.exports = {
   isMobile, // 是否为手机号
   getRandomName, // 随机生成昵称
   checkboxValue,
+  orderFormat,
 }

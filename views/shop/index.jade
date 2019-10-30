@@ -15,9 +15,12 @@ block content
       li(data-id="shop/form")
         a(href='/portal/shop/form')
           | 添加门店
+      - if (shop && !shop.isNew)
+        li.active(data-id="shop")
+          a(href='/portal/shop')
+            | 编辑门店
   block shopContent
 block scripts
-  block script
   script.
     $(document).ready(function(){
       const host = window.location.host;

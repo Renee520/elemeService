@@ -52,6 +52,15 @@ li {
 #ele-content {
   margin-left: 200px;
 }
+.ele-content{
+  margin: 20px;
+}
+.ele-content-header {
+  margin-bottom: 10px;
+}
+.ele-content-header .btn {
+  margin-right: 10px;
+}
 #ele-navbar {
   /* position: fixed; */
   top: 0;
@@ -61,6 +70,8 @@ li {
   width: 100%;
   position: -webkit-sticky;
   position: sticky;
+  background: #fff;
+  z-index: 111;
 }
 #ele-navbar .navbar-nav {
   margin-left: 0;
@@ -87,19 +98,19 @@ li {
   padding-left: 0;
   line-height: 30px;
 }
-.ele-form .ele-form--checkbox input{
+.ele-form--checkbox input{
   position: absolute;
   z-index: 10;
   opacity: 0;
 }
-.ele-form .ele-form--checkbox input[type="checkbox"] + span{
+.ele-form--checkbox input[type="checkbox"] + span{
   width: 16px;
   height: 16px;
   position: relative;
   display: inline-block;
 }
 
-.ele-form .ele-form--checkbox input[type="checkbox"] + span:before {
+.ele-form--checkbox input[type="checkbox"] + span:before {
   content: '';
   width: 14px;
   height: 14px;
@@ -110,7 +121,7 @@ li {
   position: absolute;
   transition: border-color .2s ease-in-out, background-color .2s ease-in-out;
 }
-.ele-form .ele-form--checkbox input[type="checkbox"] + span:after {
+.ele-form--checkbox input[type="checkbox"] + span:after {
   content: '';
   width: 4px;
   height: 8px;
@@ -126,11 +137,11 @@ li {
   right: 0;
   bottom: 0;
 }
-.ele-form .ele-form--checkbox input[type="checkbox"]:checked + span:before {
+.ele-form--checkbox input[type="checkbox"]:checked + span:before {
   background-color: #337ab7;
   border-color: #337ab7;
 }
-.ele-form .ele-form--checkbox input[type="checkbox"]:checked + span:after {
+.ele-form--checkbox input[type="checkbox"]:checked + span:after {
   transform: rotate(45deg) scale(1);
   transition: all .2s ease-in-out;
 }

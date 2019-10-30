@@ -5,6 +5,10 @@ var shopCtr = require('../../portal-controllers/shop');
 router.get('/', shopCtr.index);
 router.get('/form', shopCtr.form);
 router.get('/list', shopCtr.list);
+router.get('/listData', shopCtr.listData);
 router.post('/save', shopCtr.save);
+router.post('/checkName', shopCtr.checkName);
+router.get('/save-data', shopCtr.saveData);
+router.get('/:id', shopCtr.form);
 
 module.exports = router;

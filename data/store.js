@@ -1,30 +1,62 @@
 module.exports = [
   {
-    name: '星巴克咖啡代购',
-    // sendBasePrice: 20,
-    // sendPrice: 2.3,
-    isBrand: true,
-    // isFNSpecialDelivery: true,
-    // invoice: true,
-    perSpend: 20,
-    keyWord: '咖啡,奶茶果汁',
-    type: '咖啡',
-    isNewStore: true,
-    promotionInfo: '本店由（邻趣）提供星巴克咖啡代购服务，一切商业行为与星巴克无关。快至20分钟送达，餐盒费属于代购费用，请知悉。有任何问题请致电”邻趣客服“，电话:021-80351086为了可以让您有更好的体验，会自动选择距离最近的取货点，线上门店信息、地址仅供参考。',
-    address: '星巴克咖啡代购(钦江路店)',
+    name: '哈哈烤鱼',
+    isSend: true,
+    sendBasePrice: 30,
+    sendPrice: 5.3,
+    isBrand: true, // 品牌商家
+    isNewStore: false, // 新店
+    isFoodEnsure: false,  // 食安保
+    isFNSpecialDelivery: true, // 蜂鸟专送
+    invoice: false, // 开发票
+    perSpend: 56,
+    selfTake: true, // 支持自取
+    keyWord: '烤鱼,品牌商家,支持自取', // 关键字，
+    isPerfect: true, // 口碑人气好店
+    type: '烤鱼,其他快餐', // 快餐类型
+    description: '',
+    promotionInfo: '欢迎光临，用餐高峰期请提前下单，谢谢。', // 公告
+    address: '中国上海市徐汇区',
+    valid: 1,
   },
   {
-    name: '星巴克咖啡代购',
-    // sendBasePrice: 20,
-    // sendPrice: 2.3,
-    isBrand: true,
-    // isFNSpecialDelivery: true,
-    // invoice: true,
-    perSpend: 20,
-    keyWord: '咖啡,奶茶果汁',
-    type: '咖啡',
-    isNewStore: true,
-    promotionInfo: '本店由（邻趣）提供星巴克咖啡代购服务，一切商业行为与星巴克无关。快至20分钟送达，餐盒费属于代购费用，请知悉。有任何问题请致电”邻趣客服“，电话:021-80351086为了可以让您有更好的体验，会自动选择距离最近的取货点，线上门店信息、地址仅供参考。',
-    address: '星巴克咖啡代购(钦江路店)',
+    name: '淮南牛肉汤',
+    isSend: false,
+    sendBasePrice: 0,
+    sendPrice: 0,
+    isBrand: false, // 品牌商家
+    isNewStore: false, // 新店
+    isFoodEnsure: true,  // 食安保
+    isFNSpecialDelivery: false, // 蜂鸟专送
+    invoice: false, // 开发票
+    perSpend: 15,
+    selfTake: true, // 支持自取
+    keyWord: '牛肉汤,支持自取', // 关键字，
+    isPerfect: true, // 口碑人气好店
+    type: '牛肉汤,其他快餐', // 快餐类型
+    description: '',
+    promotionInfo: '欢迎光临，用餐高峰期请提前下单，谢谢。', // 公告
+    address: '中国上海市徐汇区',
+    valid: 1,
+  },
+  {
+    name: '中式牛腩牛排',
+    isSend: true,
+    sendBasePrice: 20,
+    sendPrice: 5,
+    isBrand: true, // 品牌商家
+    isNewStore: true, // 新店
+    isFoodEnsure: false,  // 食安保
+    isFNSpecialDelivery: true, // 蜂鸟专送
+    invoice: true, // 开发票
+    perSpend: 40,
+    selfTake: false, // 支持自取
+    keyWord: '牛排,支持自取,品牌商家', // 关键字，
+    isPerfect: true, // 口碑人气好店
+    type: '牛排,其他快餐', // 快餐类型
+    description: '',
+    promotionInfo: '欢迎光临，用餐高峰期请提前下单，谢谢。', // 公告
+    address: '中国上海市徐汇区',
+    valid: 1,
   },
 ]

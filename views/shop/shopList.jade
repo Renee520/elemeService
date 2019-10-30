@@ -1,5 +1,105 @@
 extends index
 
 block shopContent
-block script
+  .ele-content
+    .ele-content-header
+      button.btn.btn-default.isFNSpecialDelivery(data-id="isFNSpecialDelivery") 蜂鸟专送
+      button.btn.btn-default.isBrand(data-id="isBrand") 品牌商家
+      button.btn.btn-default.isNewStore(data-id="isNewStore") 新店
+      button.btn.btn-default.isFoodEnsure(data-id="isFoodEnsure") 食安保
+      button.btn.btn-default.invoice(data-id="invoice") 开发票
+      button.btn.btn-default.selfTake(data-id="selfTake") 支持自取
+      button.btn.btn-default.isPerfect(data-id="isPerfect") 口碑人气好店
+    table#shopTable.table.datatable.table-striped.table-bordered(style="width: 100%;")
+      thead
+block append scripts
   script.
+    $(document).ready(function() {
+      let url = '/portal/shop/listData';
+      let filterArray = [];
+      const datatable = $("#shopTable").DataTable(Object.assign(dataTableOptions, {
+        "processing": true,
+        "serverSide": true,
+        ajax: {
+          url,
+          dataSrc: function (result) {
+            if (result.status) {
+              return result.data;
+            }
+            return [];
+          }
+        },
+        //默认最后一列（最后更新时间）降序排列
+        order: [[ 3, "desc" ], [5, "desc"]],
+        columns: [
+          {
+            targets: 0,
+            data: "_id",
+            title: "id",
+          },
+          {
+            targets: 1,
+            data: 'name',
+            title: "名称",
+            render: function (data, type, row, meta) {
+              return '<a href="/portal/shop/'+row._id+'">'+ data +'</a>';
+            }
+          },
+          {
+            targets: 2,
+            data: "isSend",
+            title: "是否配送",
+            render: function (data, type, row, meta) {
+              return data ? '是' : '否'
+            }
+          },
+          {
+            targets: 3,
+            data: "sendPrice",
+            title: "配送费",
+          },
+          {
+            targets: 4,
+            data: "sendBasePrice",
+            title: "起送价格",
+          },
+          {
+            targets: 5,
+            data: "valid",
+            title: "可用",
+            render: function (data, type, row, meta) {
+              return data === 1 ? '是' : '否'
+            }
+          },
+          {
+            targets: 6,
+            data: "createDate",
+            title: "创建日期",
+          },
+        ],
+      }));
+
+      $('.ele-content-header')[0].onclick = function(e) {
+        const elm = $(e.target);
+        const value = elm.data('value');
+        const id = elm.data('id');
+        const idx = filterArray.indexOf(id);
+        if (!value || value != '1') {
+          elm.data('value', '1');
+          elm.addClass('btn-info');
+          if (idx < 0) {
+            filterArray.push(elm.data('id'))
+          }
+        } else {
+          elm.data('value', '0');
+          elm.removeClass('btn-info');
+          if (idx >= 0) {
+            filterArray.splice(idx, 1);
+          }
+        }
+        datatable.ajax.url(`${url}?filterKey=${filterArray.toString()}`),
+        datatable.draw();
+        console.log(datatable.ajax.url());
+
+      }
+    });
