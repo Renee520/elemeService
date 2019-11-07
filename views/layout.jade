@@ -5,6 +5,7 @@ html
     link(rel='stylesheet', href='/css/bootstrap.css')
     link(rel='stylesheet', href='http://www.datatables.club/js/datatables/dataTables.bootstrap.css')
     link(rel='stylesheet', href='/css/style.css')
+    block head
   body
     #ele-container
       #ele-sidebar
@@ -13,6 +14,14 @@ html
             a(href='/portal/user') 用户
           li(data-id="shop")
             a(href='/portal/shop') 店铺
+          li(data-id="activity")
+            a(href='/portal/activity/list') 活动
+          li(data-id="menu")
+            a(href='/portal/menu/list') 食物分类
+          li(data-id="food")
+            a(href='/portal/food/list') 食物
+          li(data-id="create")
+            a(href='/portal/create') 创建数据
       #ele-content
         block content
     script(src="/js/jquery-3.4.1.min.js")

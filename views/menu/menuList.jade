@@ -1,0 +1,134 @@
+extends index
+block append head
+  style.
+    .ele-menu-list {
+      display: inline-block;
+      margin-bottom: 10px;
+      margin-right: 20px;
+    }
+
+
+block subContent
+  .ele-content
+    .ele-content-header
+      h3.ele-text--primary #{(shop && shop.name) || ''}
+    table#menuTable.table.datatable.table-striped.table-bordered(style="width: 100%;")
+      thead
+  #foodDialog.modal.fade.bs-example-modal-md(tabindex='-1', role='dialog', aria-labelledby='foodDialog')
+    .modal-dialog.modal-md(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+          h4.modal-title 
+        .modal-body
+
+  #delDialog.modal.fade.bs-example-modal-sm(tabindex='-1', role='dialog', aria-labelledby='delDialog')
+    .modal-dialog.modal-sm(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+          h4.modal-title 删除菜单
+        .modal-body
+
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') 取消
+          button.btn.btn-primary(type='button',onclick="delStore()") 确定
+block append scripts
+  script.
+    function delStore() {
+      var id = $('#delDialog').data('id');
+      location.href = "/portal/menu/del/" + id;
+    }
+    $(document).ready(function() {
+      const shopId = '#{shop ? shop._id : ""}';
+      let url = '/portal/menu/listData';
+      if (shopId) {
+        url += '?shopId=' + shopId;
+      }
+      let filterArray = [];
+      const datatable = $("#menuTable").DataTable(Object.assign(dataTableOptions, {
+        "processing": true,
+        "serverSide": true,
+        ajax: {
+          url,
+          dataSrc: function (result) {
+            if (result.status) {
+              return result.data;
+            }
+            return [];
+          }
+        },
+        //默认最后一列（最后更新时间）降序排列
+        order: [[ 2, "desc" ]],
+        columns: [
+          {
+            targets: 1,
+            data: 'name',
+            title: "名称",
+            render: function (data, type, row, meta) {
+              return '<a href="/portal/menu/edit/'+row.store._id+'/'+row._id+'">'+ data +'</a>';
+            }
+          },
+          {
+            targets: 2,
+            data: 'store.name',
+            title: "所属门店",
+          },
+          {
+            targets: 3,
+            data: "valid",
+            title: "可用",
+            render: function (data, type, row, meta) {
+              return `
+                <a href="/portal/menu/valid/${row._id}"><div class="ele-form--checkbox">
+                  <input type='checkbox', ${data === 1 ? 'checked' : ''} />
+                  <span></span>
+                </div></a>
+              `;
+            }
+          },
+          {
+            targets: 4,
+            data: "name",
+            title: "操作",
+            render: function (data, type, row, meta) {
+              return `
+                <button type="button" data-id="${row._id}" data-name="${row.name}" class="btn btn-primary btn-xs showFood">查看食物</button>
+                <button type="button" data-id="${row._id}" data-name="${row.name}" class="btn btn-danger btn-xs del">删除</button>
+              `
+            }
+          },
+        ],
+      }));
+
+      $("#menuTable").on("click",".del",function(){//给tr或者td添加click事件
+        var {id, name} = $(this).data();
+        $('#delDialog .modal-body').html(`确认删除“${name}”吗？`)
+        $('#delDialog').data('id', id);
+        $('#delDialog').modal('show');
+      }).on('click', '.showFood', function() {
+        // <div class="ele-menu-list"><a href="#">食物1</a></div>
+        var {id, name} = $(this).data();
+        $('#foodDialog .modal-title').html(name);
+        $.get('/portal/menu/food/' + id).then(
+          r => {
+            let html = '';
+            if (r.status && r.data) {
+              r.data.forEach(item => {
+                html += `
+                  <div class="ele-menu-list"><a href="/portal/food/edit/${shopId}/${item._id}">${item.name}</a></div>
+                `
+              })
+            } else {
+              if (r.msg) {
+                alert(r.msg)
+              }
+            }
+            $('#foodDialog .modal-body').html(html);
+          }
+        )
+        $('#foodDialog').modal('show');
+      });
+    });

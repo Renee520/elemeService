@@ -12,12 +12,16 @@ body {
 li {
   list-style: none;
 }
+.datatable .ele-form--checkbox input {
+  z-index: 0;
+}
 .navbar-default {
   background-color: #fff;
 }
 .navbar-toggle .icon-bar {
   background-color: #337ab7;
 }
+.ele-text--primary { color: #337ab7;}
 
 #ele-navbar li.active a {
   background-color: #337ab7;
@@ -98,8 +102,16 @@ li {
   padding-left: 0;
   line-height: 30px;
 }
+.ele-form--checkbox {
+  height: 22px;
+  line-height: 22px;
+  display: inline-block;
+  position: relative;
+}
 .ele-form--checkbox input{
   position: absolute;
+  width: 100%;
+  height: 100%;
   z-index: 10;
   opacity: 0;
 }
@@ -108,6 +120,14 @@ li {
   height: 16px;
   position: relative;
   display: inline-block;
+  margin-top: 3px;
+  margin-right: 5px;
+}
+.modal-checkbox .ele-form--checkbox {
+  margin-right: 20px;
+}
+.ele-form--checkbox span:last-child {
+  vertical-align: super;
 }
 
 .ele-form--checkbox input[type="checkbox"] + span:before {
@@ -148,4 +168,9 @@ li {
 .form-horizontal .control-label.is-required:after {
   content: '*';
   color: red;
+}
+
+.ele-active-shop li {
+  display: inline-block;
+  margin: 10px;
 }

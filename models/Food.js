@@ -11,14 +11,22 @@ const foodSchema = new Schema({
     type: ObjectId,
     ref: 'Store',
   },
+  description: String,
   name: String,
-  hotLevel: Number, // 辣度
+  hotLevel: {
+    type: Number,
+    default: 0,
+  }, // 辣度
   price: {  // 价格
     type: Number,
     default: 0,
   },
   quantity: Number,
   feedstock: String, // 主要原料
+  recommend: {  // 店长推荐
+    type: Boolean,
+    default: false,
+  },
   valid: {
     type: Number,
     default: 1,

@@ -1,0 +1,85 @@
+extends index
+block subContent
+  .container-fluid
+    form#menuForm.form-horizontal
+      .ele-form-header
+        - if (!menu.isNew)
+          input.hidden(name="id",value="#{menu._id}")
+        .ele-form-header__btn.text-right
+          button.btn.btn-default.btn-sm.form-back(type="button") 返回
+          button.btn.btn-primary.btn-sm.form-save(type="submit") 保存
+        .ele-form
+          .form-group
+            label.col-sm-3.control-label.is-required(for='name') 名称
+            .col-sm-9
+              input#name.form-control(type='text', value="#{menu.name || ''}", placeholder='活动名称', name="name", required)
+          .form-group
+            label.col-sm-3.control-label 门店
+            .col-sm-9
+              label #{shop.name}
+              input.hide.form-control(type='text', value="#{shop._id}", name="shop")
+          .form-group
+            label.col-sm-3.control-label(for='description') 描述
+            .col-sm-9
+              textarea#description.form-control(row="3", name="description") #{menu.description || ''}
+          .form-group
+            label.col-sm-3.control-label(for='index') 排序
+            .col-sm-9
+              input#index.form-control(type='number', value="#{menu.index || 0}", name="index")
+          .form-group
+            label.col-sm-3.control-label(for='valid')  可用
+            .col-sm-9
+              .ele-form--checkbox.form-control
+                input#valid(type='checkbox', checked=menu.valid === 1, name="valid")
+                span
+block append scripts
+  script(src="/js/bootstrapValidator.min.js")
+  script(src="/js/zh_CN.js")
+  script.
+    $(document).ready(function() {
+      $('#menuForm').bootstrapValidator({
+        fields: {
+          name: {
+            validators: {
+              remote: { // ajax校验，获得一个json数据（{'valid': true or false}）
+                url: '/portal/menu/checkName',       //验证地址
+                message: '菜单名重复',   //提示信息
+                type: 'post',          //请求方式
+                data: {
+                  name: function() {
+                    return $("input[name='name']").val();
+                  },
+                  id: function() {
+                    return $("input[name='id']").val()
+                  },
+                  shop: function() {
+                    return $("input[name='shop']").val()
+                  }
+                },
+                delay: 1000,
+              }
+            }
+          },
+        },
+      }).on('success.form.bv', e => {
+        e.preventDefault();
+        let data = $('#menuForm').serializeObject();
+        //- data.shop = $("input[name='shop']").val();
+        $.post('/portal/menu/save', $('#menuForm').serializeObject(), function(result) {
+          if (!result.status) {
+            let msgHtml = `
+              <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>错误信息!</strong> ${result.msg || '未知错误'}
+              </div>
+            `;
+            $('#menuForm').prepend(msgHtml);
+          } else {
+            location.href = "/portal/menu/list/" + $("input[name='shop']").val();
+          }
+        })
+      })
+      $('button.form-back')[0].onclick = function() {
+        window.history.go(-1);
+      }
+    })

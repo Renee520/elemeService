@@ -1,6 +1,5 @@
 var MobileCode = require('../models/MobileCode');
 var moment = require('moment');
-// var async = require('async');
 
 var util = require('../util');
 
@@ -55,11 +54,6 @@ function sendMobileCode(req, res, next) {
   );
 };
 
-function test(req, res, next) {
-  res.json({status: 1});
-}
-
 module.exports = {
   sendMobileCode, // 发送验证码
-  test,
 };

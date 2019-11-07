@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+  .navbar-header
+    button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#ele-navbar', aria-controls='bs-navbar', aria-expanded='false')
+      span.sr-only Toggle navigation
+      span.icon-bar
+      span.icon-bar
+      span.icon-bar
+  #ele-navbar.collapse.navbar-collapse
+    ul.nav.navbar-nav
+      li(data-id="activity/list")
+        a(href=`/portal/activity/list${shop && !shop.isNew ? '/' + shop._id : ''}`)
+          | 活动列表
+      li(data-id="activity/form")
+        a(href=`/portal/activity/form/${shop && !shop.isNew ? shop._id : '0'}`)
+          | 添加活动
+      - if (activity && !activity.isNew)
+        li.active(data-id="activity/edit")
+          a(href='#')
+            | 编辑活动
+      
+  block activityContent
+block scripts
+  script.
+    $(document).ready(function(){
+      const host = window.location.host;
+      const href = window.location.href;
+      const url = href.split(host)[1];
+      $('#ele-navbar li').each(function() {
+        const id = $(this).data('id');
+        console.log(id, url, url.indexOf(id));
+        if (url.indexOf(id) >= 0) {
+          $(this).addClass('active')
+        }
+      })
+    });

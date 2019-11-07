@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+  .navbar-header
+    button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#ele-navbar', aria-controls='bs-navbar', aria-expanded='false')
+      span.sr-only Toggle navigation
+      span.icon-bar
+      span.icon-bar
+      span.icon-bar
+  #ele-navbar.collapse.navbar-collapse
+    ul.nav.navbar-nav
+      li(data-id="food/list")
+        a(href=`/portal/food/list${shop && !shop.isNew ? '/' + shop._id : ''}`)
+          | 食物列表
+      li(data-id="food/form")
+        a(href=`/portal/food/form/${shop && !shop.isNew ? shop._id : '0'}`)
+          | 添加食物
+      - if (food && !food.isNew)
+        li.active(data-id="food/edit")
+          a(href='#')
+            | 编辑食物
+      
+  block subContent
+block scripts
+  script.
+    $(document).ready(function(){
+      const host = window.location.host;
+      const href = window.location.href;
+      const url = href.split(host)[1];
+      $('#ele-navbar li').each(function() {
+        const id = $(this).data('id');
+        if (url.indexOf(id) >= 0) {
+          $(this).addClass('active')
+        }
+      })
+    });

@@ -8,7 +8,8 @@ router.get('/list', shopCtr.list);
 router.get('/listData', shopCtr.listData);
 router.post('/save', shopCtr.save);
 router.post('/checkName', shopCtr.checkName);
-router.get('/save-data', shopCtr.saveData);
+router.get('/valid/:id', shopCtr.valid);
+router.get('/del/:id', shopCtr.del);
 router.get('/:id', shopCtr.form);
 
 module.exports = router;

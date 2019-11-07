@@ -1,40 +1,114 @@
 var Store = require('../models/Store');
+var Activity = require('../models/Activity');
 var moment = require('moment');
 // var async = require('async');
 
 var util = require('../util');
 
-function saveStore(req, res, next) {
-  const store = new Store({
-    name: '星巴克咖啡代购',
-    // sendBasePrice: 20,
-    // sendPrice: 2.3,
-    isBrand: true,
-    // isFNSpecialDelivery: true,
-    // invoice: true,
-    perSpend: 20,
-    keyWord: '咖啡,奶茶果汁',
-    type: '咖啡',
-    isNewStore: true,
-    promotionInfo: '本店由（邻趣）提供星巴克咖啡代购服务，一切商业行为与星巴克无关。快至20分钟送达，餐盒费属于代购费用，请知悉。有任何问题请致电”邻趣客服“，电话:021-80351086为了可以让您有更好的体验，会自动选择距离最近的取货点，线上门店信息、地址仅供参考。',
-    address: '星巴克咖啡代购(钦江路店)',
-  });
-  store.save().then(
-    result => {
-      res.render('index', { title: 'Express', description: result.name });
-    },
-    err => {
-      console.log(err);
+function getStore(req, res) {
+  let matchQuery = {};
+  let { pageSize, pageIndex, services, costFrom, costTo } = req.query;
+  pageSize = Number(pageSize);
+  pageIndex = Number(pageIndex);
+  pageSize = isNaN(pageSize) ? 10 : pageSize;
+  pageIndex = isNaN(pageIndex) ? 1 : pageIndex;
+
+  // 筛选条件
+  // 商家服务 多选条件 【蜂鸟专送：1，品牌商家：2，新店：3，食安保：4，开发票：5】
+  //discount 优惠活动【当前只考虑首单立减活动】
+  if (services) {
+    services = services.split(',');
+    if (services.indexOf('1') >= 0) {
+      matchQuery.isFNSpecialDelivery = true;
     }
-  )
+    if (services.indexOf('2') >= 0) {
+      matchQuery.isBrand = true;
+    }
+    if (services.indexOf('3') >= 0) {
+      matchQuery.isNewStore = true;
+    }
+    if (services.indexOf('4') >= 0) {
+      matchQuery.isFoodEnsure = true;
+    }
+    if (services.indexOf('5') >= 0) {
+      matchQuery.invoice = true;
+    }
+  }
+
+  
+  try {
+    costFrom = Number(costFrom);
+    costFrom = isNaN(costFrom) ? 0 : costFrom;
+    costTo = Number(costTo);
+    costTo = isNaN(costTo) ? 0 : costTo;
+    matchQuery.perSpend = {};
+    if(costFrom) {
+      matchQuery.perSpend['$gte'] = costFrom;
+    }
+    if(costTo) {
+      matchQuery.perSpend['$lte'] = costTo;
+    }
+    if (!costTo && !costFrom) delete matchQuery.perSpend;
+    console.log(matchQuery);
+    Store.aggregate([{
+        $match: matchQuery
+      },
+      {
+        $lookup: {
+          from: 'activities',  // 从哪个Schema中查询（一般需要复数，除非声明Schema的时候专门有处理）
+          localField: '_id',  // 本地关联的字段
+          foreignField: 'store', // user中用的关联字段
+          as: 'activities' // 查询到所有user后放入的字段名，这个是自定义的，是个数组类型。
+        }
+      }
+    ]).skip(pageSize * (pageIndex - 1)).limit(pageSize).then(
+      r => {
+        console.log(r.length);
+        res.json({
+          status: 1,
+          data: r,
+        })
+      },
+      err => {
+        res.json({
+          status: 0,
+          msg: err,
+        })
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+  // Store.find().skip(pageSize * (pageIndex - 1)).limit(pageSize).then(
+  //   r => {
+  //     if (r && r.length) {
+  //       r.forEach((item, i) => {
+  //         r[i]._doc.activities = []
+  //         Activity.find({store: item._id}).then(
+  //           activities => {
+  //             r[i]._doc.activities = activities;
+  //             if (i === 0) {
+  //               console.log(r[i]);
+  //             }
+  //           },
+  //           err => {}
+  //         )
+  //       })
+  //     }
+      // res.json({
+      //   status: 1,
+      //   data: r,
+      // })
+  //   },
+  //   err => {
+  //     res.json({
+  //       status: 0,
+  //       msg: err,
+  //     })
+  //   }
+  // )
 }
-
-function saveActivity(req, res, next) {
-
-}
-
 
 module.exports = {
-  saveStore, // 保存门店
-  saveActivity, // 保存活动
+  getStore,
 };

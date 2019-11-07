@@ -1,7 +1,6 @@
 var util = require('../util');
 var moment = require('moment');
 var Store = require('../models/Store');
-var data = require('../data/store');
 
 function index(req, res, next) {
   res.redirect('/portal/shop/list');
@@ -12,10 +11,10 @@ function list(req, res, next) {
 function listData(req, res, next) {
   const { draw, filterKey, start, length, search, order } = req.query;
   let sort = util.orderFormat(order, req.query.columns);
-
+  
   let searchKey = {};
-  const reg = new RegExp(search.value, 'i');
-  if (search.value) {
+  if (search && search.value) {
+    const reg = new RegExp(search.value, 'i');
     searchKey = {'name': { $regex : reg }}
   }
 
@@ -137,17 +136,44 @@ function checkName(req, res, next) {
   )
 }
 
-function saveData(req, res, next) {
-  Store.remove().then(
-    () => {
-      Store.collection.insert(data, function(err, dos) {
-        res.redirect('/portal/shop/list')
+function valid(req, res, next) {
+  const id = req.params.id;
+  Store.findById(id).then(
+    r => {
+      let v = r.valid === 1 ? 0 : 1;
+      return Store.update({_id: id}, {
+        $set: {
+          valid: v
+        }
       })
     },
+    err => Promise.reject(err)
+  ).then(
+    r => {
+      res.redirect('back');
+    },
     err => {
-      res.redirect('/portal/shop/list')
+      res.render('shop/shopList', {msg: err});
     }
   )
+}
+
+function del(req, res, next) {
+  const id = req.params.id;
+  console.log(id);
+  try {
+    Store.findByIdAndRemove(id).then(
+      r => {
+        console.log(r);
+        res.redirect('back');
+      },
+      err => {
+        res.render('shop/shopList', {msg: err});
+      }
+    )
+  } catch (error) {
+    console.log('======', error);
+  }
 }
 
 module.exports = {
@@ -157,5 +183,6 @@ module.exports = {
   save,
   checkName,
   listData,
-  saveData,
+  valid,
+  del,
 };

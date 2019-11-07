@@ -1,0 +1,118 @@
+extends index
+block subContent
+  .container-fluid
+    form#foodForm.form-horizontal
+      .ele-form-header
+        - if (!food.isNew)
+          input.hidden(name="id",value="#{food._id}")
+        .ele-form-header__btn.text-right
+          button.btn.btn-default.btn-sm.form-back(type="button") 返回
+          button.btn.btn-primary.btn-sm.form-save(type="submit") 保存
+        .ele-form
+          .form-group
+            label.col-sm-3.control-label.is-required(for='name') 名称
+            .col-sm-9
+              input#name.form-control(type='text', value="#{food.name || ''}", placeholder='食物名称', name="name", required)
+          .form-group
+            label.col-sm-3.control-label 门店
+            .col-sm-9
+              label.form-control #{shop.name}
+              input.hide.form-control(type='text', value="#{shop._id}", name="store")
+          .form-group
+            label.col-sm-3.control-label.is-required 菜单
+            .col-sm-9
+              select.form-control(name="menu", required)
+                - for(var i=0; i<menus.length; i++)
+                  option(value="#{menus[i]._id}") #{menus[i].name}
+           .form-group
+            label.col-sm-3.control-label(for='hotLevel') 辣度
+            .col-sm-9
+              input#hotLevel.form-control(type='number', value="#{food.hotLevel || 0}", placeholder='食物辣度', name="hotLevel")
+           .form-group
+            label.col-sm-3.control-label.is-required(for='price') 价格
+            .col-sm-9
+              input#price.form-control(type='text', value="#{food.price || ''}", placeholder='食物价格', name="price", required)
+          .form-group
+            label.col-sm-3.control-label(for='quantity') 库存
+            .col-sm-9
+              input#quantity.form-control(type='number', value="#{food.quantity || 0}", placeholder='食物库存', name="quantity")
+          .form-group
+            label.col-sm-3.control-label(for='feedstock') 主要原料
+            .col-sm-9
+              input#feedstock.form-control(type='text', value="#{food.feedstock || ''}", placeholder='主要原料', name="feedstock")
+          .form-group
+            label.col-sm-3.control-label(for='description') 描述
+            .col-sm-9
+              textarea#description.form-control(row="3", name="description") #{food.description || ''}
+          .form-group
+            label.col-sm-3.control-label(for='recommend')  店长推荐
+            .col-sm-9
+              .ele-form--checkbox.form-control
+                input#recommend(type='checkbox', checked=food.recommend === 1, name="recommend")
+                span
+          .form-group
+            label.col-sm-3.control-label(for='valid')  可用
+            .col-sm-9
+              .ele-form--checkbox.form-control
+                input#valid(type='checkbox', checked=food.valid === 1, name="valid")
+                span
+block append scripts
+  script(src="/js/bootstrapValidator.min.js")
+  script(src="/js/zh_CN.js")
+  script.
+    $(document).ready(function() {
+      $('#foodForm').bootstrapValidator({
+        fields: {
+          name: {
+            validators: {
+              remote: { // ajax校验，获得一个json数据（{'valid': true or false}）
+                url: '/portal/food/checkName',       //验证地址
+                message: '食物名重复',   //提示信息
+                type: 'post',          //请求方式
+                data: {
+                  name: function() {
+                    return $("input[name='name']").val();
+                  },
+                  id: function() {
+                    return $("input[name='id']").val()
+                  },
+                  store: function() {
+                    return $("input[name='store']").val()
+                  }
+                },
+                delay: 1000,
+              }
+            }
+          },
+          price: {
+            validators: {
+              regexp: {
+                enabled: true,
+                regexp: /^[0-9\.]+$/,
+                message: '请输入数字'
+              }
+            }
+          },
+        },
+      }).on('success.form.bv', e => {
+        e.preventDefault();
+        let data = $('#menuForm').serializeObject();
+        //- data.shop = $("input[name='shop']").val();
+        $.post('/portal/food/save', $('#foodForm').serializeObject(), function(result) {
+          if (!result.status) {
+            let msgHtml = `
+              <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>错误信息!</strong> ${result.msg || '未知错误'}
+              </div>
+            `;
+            $('#foodForm').prepend(msgHtml);
+          } else {
+            location.href = "/portal/food/list/" + $("input[name='store']").val();
+          }
+        })
+      })
+      $('button.form-back')[0].onclick = function() {
+        window.history.go(-1);
+      }
+    })

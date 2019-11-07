@@ -5,10 +5,17 @@ const { ObjectId } = mongoose.Types;
 const foodMenuSchema = new Schema({
   name: String,
   description: String,
-  index: Number, // 排序
+  index: {
+    type: Number,
+    default: 0,
+  }, // 排序
   store: {
     type: ObjectId,
     ref: 'Store',
+  },
+  valid: {
+    type: Number,
+    default: 1,
   }
   
 }, { timestamps: true });

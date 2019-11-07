@@ -4,6 +4,6 @@ var storeCtr = require('../controllers/store');
 var moment = require('moment');
 
 /* GET home page. */
-router.get('/save', storeCtr.saveStore);
+router.get('/getStore', storeCtr.getStore);
 
 module.exports = router;

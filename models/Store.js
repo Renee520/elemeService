@@ -21,7 +21,7 @@ const storeSchema = new Schema({
   isFoodEnsure: Boolean,  // 食安保
   isFNSpecialDelivery: Boolean, // 蜂鸟专送
   invoice: Boolean, // 开发票
-  perSpend: {
+  perSpend: { // 人均消费
     type: Number,
     default: 0,
   },

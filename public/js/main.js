@@ -18,6 +18,7 @@ window.dataTableOptions = {
   "dom": "<'row'<'col-md-6'l<'#toolbar'>><'col-md-6'f>r>" +
         "t" +
         "<'row'<'col-md-5 sm-center'i><'col-md-7 text-right sm-center'p>>",
+  "pageLength": 100,
   "pagingType": "full_numbers",
   "language": {
     "sProcessing": "处理中...",
@@ -43,4 +44,20 @@ window.dataTableOptions = {
       "sSortDescending": ": 以降序排列此列"
     },
   },
+}
+
+window.getQueryObj = function(){
+  let url = decodeURI(document.location.toString());
+  let queryString = url.split('?')[1] || []
+  let queryObj = {};
+  if (queryString[0]) {
+    queryString = queryString.split('&');
+  }
+  queryString.forEach(query => {
+    let data = query.split('=');
+    if (data[0]) {
+      queryObj[data[0]] = data[1] || null;
+    }
+  });
+  return queryObj;
 }

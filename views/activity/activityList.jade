@@ -1,0 +1,130 @@
+extends index
+
+block activityContent
+  .ele-content
+    .ele-content-header
+      h3.ele-text--primary #{(shop && shop.name) || ''}
+    //-   button.btn.btn-default.isFNSpecialDelivery(data-id="isFNSpecialDelivery") 蜂鸟专送
+    //-   button.btn.btn-default.isBrand(data-id="isBrand") 品牌商家
+    //-   button.btn.btn-default.isNewStore(data-id="isNewStore") 新店
+    //-   button.btn.btn-default.isFoodEnsure(data-id="isFoodEnsure") 食安保
+    //-   button.btn.btn-default.invoice(data-id="invoice") 开发票
+    //-   button.btn.btn-default.selfTake(data-id="selfTake") 支持自取
+    //-   button.btn.btn-default.isPerfect(data-id="isPerfect") 口碑人气好店
+    table#activityTable.table.datatable.table-striped.table-bordered(style="width: 100%;")
+      thead
+  #delDialog.modal.fade.bs-example-modal-sm(tabindex='-1', role='dialog', aria-labelledby='delDialog')
+    .modal-dialog.modal-sm(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+          h4#exampleModalLabel.modal-title 删除活动
+        .modal-body
+
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') 取消
+          button.btn.btn-primary(type='button',onclick="delStore()") 确定
+block append scripts
+  script.
+    function delStore() {
+      var id = $('#delDialog').data('id');
+      location.href = "/portal/activity/del/" + id;
+    }
+    $(document).ready(function() {
+      const shopId = '#{shop ? shop._id : ""}';
+      let url = '/portal/activity/listData';
+      if (shopId) {
+        url += '?shopId=' + shopId;
+      }
+      let filterArray = [];
+      const datatable = $("#activityTable").DataTable(Object.assign(dataTableOptions, {
+        "processing": true,
+        "serverSide": true,
+        ajax: {
+          url,
+          dataSrc: function (result) {
+            if (result.status) {
+              return result.data;
+            }
+            return [];
+          }
+        },
+        //默认最后一列（最后更新时间）降序排列
+        order: [[ 1, "desc" ]],
+        columns: [
+          {
+            targets: 1,
+            data: 'name',
+            title: "名称",
+            render: function (data, type, row, meta) {
+              return '<a href="/portal/activity/edit/'+row.store._id+'/'+row._id+'">'+ data +'</a>';
+            }
+          },
+          {
+            targets: 2,
+            data: 'store.name',
+            title: "所属门店",
+          },
+          {
+            targets: 3,
+            data: 'description',
+            title: "描述",
+          },
+          {
+            targets: 4,
+            data: 'icon名称',
+            title: "iconName",
+            render: function (data, type, row, meta) {
+              return data ? data : ''
+            }
+          },
+          {
+            targets: 5,
+            data: 'newUserOfSystem',
+            title: "新用户享用",
+            render: function (data, type, row, meta) {
+              return data ? '是' : '否'
+            }
+          },
+          {
+            targets: 6,
+            data: 'newUserOfStore',
+            title: "本店新用户享用",
+            render: function (data, type, row, meta) {
+              return data ? '是' : '否'
+            }
+          },
+          {
+            targets: 7,
+            data: "valid",
+            title: "可用",
+            render: function (data, type, row, meta) {
+              return `
+                <a href="/portal/activity/valid/${row._id}"><div class="ele-form--checkbox">
+                  <input type='checkbox', ${data === 1 ? 'checked' : ''} />
+                  <span></span>
+                </div></a>
+              `;
+            }
+          },
+          {
+            targets: 7,
+            data: "name",
+            title: "操作",
+            render: function (data, type, row, meta) {
+              return `
+                <button type="button" data-id="${row._id}" data-name="${row.name}" class="btn btn-danger btn-xs del">删除</button>
+              `
+            }
+          },
+        ],
+      }));
+
+      $("#activityTable").on("click",".del",function(){//给tr或者td添加click事件
+        var {id, name} = $(this).data();
+        $('#delDialog .modal-body').html(`确认删除“${name}”吗？`)
+        $('#delDialog').data('id', id);
+        $('#delDialog').modal('show');
+      });
+    });
