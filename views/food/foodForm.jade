@@ -19,16 +19,24 @@ block subContent
               label.form-control #{shop.name}
               input.hide.form-control(type='text', value="#{shop._id}", name="store")
           .form-group
-            label.col-sm-3.control-label.is-required 菜单
+            label.col-sm-3.control-label.is-required 添加菜单
             .col-sm-9
-              select.form-control(name="menu", required)
-                - for(var i=0; i<menus.length; i++)
-                  option(value="#{menus[i]._id}") #{menus[i].name}
-           .form-group
+              button.btn.btn-primary.btn-sm.show-menu(type="button") 选择菜单
+              p #{allMenus}
+          .form-group
+            label.col-sm-3.control-label
+            .col-sm-9.ele-active-menu
+          //- .form-group
+          //-   label.col-sm-3.control-label.is-required 菜单
+          //-   .col-sm-9
+          //-     select.form-control(name="menu", required)
+          //-       - for(var i=0; i<menus.length; i++)
+          //-         option(value="#{menus[i]._id}") #{menus[i].name}
+          .form-group
             label.col-sm-3.control-label(for='hotLevel') 辣度
             .col-sm-9
               input#hotLevel.form-control(type='number', value="#{food.hotLevel || 0}", placeholder='食物辣度', name="hotLevel")
-           .form-group
+          .form-group
             label.col-sm-3.control-label.is-required(for='price') 价格
             .col-sm-9
               input#price.form-control(type='text', value="#{food.price || ''}", placeholder='食物价格', name="price", required)
@@ -36,6 +44,14 @@ block subContent
             label.col-sm-3.control-label(for='quantity') 库存
             .col-sm-9
               input#quantity.form-control(type='number', value="#{food.quantity || 0}", placeholder='食物库存', name="quantity")
+          .form-group
+            label.col-sm-3.control-label(for='monthSales') 月售量
+            .col-sm-9
+              input#monthSales.form-control(type='number', value="#{food.monthSales || 0}", placeholder='月售量', name="monthSales")
+          .form-group
+            label.col-sm-3.control-label(for='rate') 好评率
+            .col-sm-9
+              input#rate.form-control(type='number', value="#{food.rate || 0}", placeholder='好评率', name="rate")
           .form-group
             label.col-sm-3.control-label(for='feedstock') 主要原料
             .col-sm-9
@@ -56,34 +72,118 @@ block subContent
               .ele-form--checkbox.form-control
                 input#valid(type='checkbox', checked=food.valid === 1, name="valid")
                 span
+  #showMenuDialog.modal.fade.bs-example-modal-md(tabindex='-1', role='dialog')
+    .modal-dialog.modal-md(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') ×
+          h4#exampleModalLabel.modal-title 菜单展示
+        .modal-body
+          .modal-checkbox
 block append scripts
   script(src="/js/bootstrapValidator.min.js")
   script(src="/js/zh_CN.js")
   script.
     $(document).ready(function() {
+      let allMenus = [];
+      let currMenus = [];
+      const shop = JSON.parse('!{shopStr}');
+      $.get('/portal/menu/listData?start=0&length=100&shopId=' + shop._id).then(
+        r => {
+          let shopHtml = '';
+          if (r.status && r.data.length) {
+            allMenus = r.data;
+          }
+        },
+        err => {
+          console.error(err);
+        }
+      );
+
+      function showHtml() {
+        let html = '';
+        if (currMenus.length) {
+          currMenus.forEach(item => {
+            html += `
+              <li data-id="${item.id}">
+                <span>${item.name}</span>
+                <button type="button" aria-label="Close" class="close">&times;</button>
+              </li>
+            `
+          });
+        }
+        $('.ele-active-menu').empty().html(html);
+      }
+      function shopDialogHtml() {
+        let shopHtml = '';
+        if (allMenus.length) {
+          allMenus.forEach(d => {
+            let idx = currMenus.findIndex(item => item.id === d._id);
+            shopHtml += `
+              <div class="ele-form--checkbox" data-id="${d._id}" data-name="${d.name}">
+                <input type="checkbox" name="shopIds" ${idx >= 0 ? 'checked' : ''} data-id="${d._id}" />
+                <span></span>
+                <span>${d.name}</span>
+              </div>
+            `
+          });
+        }
+        $('.modal-checkbox').html(shopHtml);
+      }
+
+      $(document).on('click', '.show-menu', function() {
+        shopDialogHtml();
+        $('#showMenuDialog').modal('show');
+      }).on('click', '.ele-active-menu li', function(e) {
+        if (e.target.nodeName === 'BUTTON' && e.target.className === 'close') {
+          const id = $(e.target.parentElement).data('id');
+          const idx = currMenus.findIndex(item => item.id === id);
+          
+          if (idx >= 0) {
+            currMenus.splice(idx, 1);
+            showHtml();
+          }
+        }
+      }).on('click', '.modal-checkbox', function(e) {
+        const { id, name } = $(e.target.parentElement).data();
+        const checked = $(e.target).is(":checked");
+        const idx = currMenus.findIndex(item => item.id === id);
+        if (checked && idx < 0) {
+          currMenus.push({
+            name,
+            id
+          });
+        } else {
+          currMenus.splice(idx, 1);
+        }
+        showHtml();
+      }).on('click', '.form-inline button.close', function(e) {
+        $(e.target.parentElement.parentElement).remove();
+      });
       $('#foodForm').bootstrapValidator({
         fields: {
-          name: {
-            validators: {
-              remote: { // ajax校验，获得一个json数据（{'valid': true or false}）
-                url: '/portal/food/checkName',       //验证地址
-                message: '食物名重复',   //提示信息
-                type: 'post',          //请求方式
-                data: {
-                  name: function() {
-                    return $("input[name='name']").val();
-                  },
-                  id: function() {
-                    return $("input[name='id']").val()
-                  },
-                  store: function() {
-                    return $("input[name='store']").val()
-                  }
-                },
-                delay: 1000,
-              }
-            }
-          },
+          //- name: {
+          //-   validators: {
+          //-     remote: { // ajax校验，获得一个json数据（{'valid': true or false}）
+          //-       url: '/portal/food/checkName',       //验证地址
+          //-       message: '食物名重复',   //提示信息
+          //-       type: 'post',          //请求方式
+          //-       data: {
+          //-         name: function() {
+          //-           return $("input[name='name']").val();
+          //-         },
+          //-         id: function() {
+          //-           return $("input[name='id']").val()
+          //-         },
+          //-         store: function() {
+          //-           return $("input[name='store']").val()
+          //-         }
+          //-       },
+          //-       delay: 1000,
+          //-     }
+          //-   }
+          //- },
           price: {
             validators: {
               regexp: {
@@ -96,9 +196,13 @@ block append scripts
         },
       }).on('success.form.bv', e => {
         e.preventDefault();
-        let data = $('#menuForm').serializeObject();
-        //- data.shop = $("input[name='shop']").val();
-        $.post('/portal/food/save', $('#foodForm').serializeObject(), function(result) {
+        if (!currMenus.length) {
+          alert('选择菜单')
+          return;
+        }
+        let data = $('#foodForm').serializeObject();
+        data.menus = JSON.stringify(currMenus);
+        $.post('/portal/food/save', data, function(result) {
           if (!result.status) {
             let msgHtml = `
               <div class="alert alert-danger alert-dismissible" role="alert">

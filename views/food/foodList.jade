@@ -61,8 +61,12 @@ block append scripts
           },
           {
             targets: 3,
-            data: 'menu.name',
+            data: 'menus',
             title: "所属菜单",
+            render: function (data, type, row, meta) {
+              let names = data.map(item => item.name);
+              return names;
+            }
           },
           {
             targets: 4,

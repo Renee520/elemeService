@@ -170,7 +170,7 @@ li {
   color: red;
 }
 
-.ele-active-shop li {
+.ele-active-shop li, .ele-active-menu li {
   display: inline-block;
   margin: 10px;
 }

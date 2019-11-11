@@ -7,7 +7,6 @@ router.get('/edit/:storeId/:id', foodCtr.form);
 router.get('/listData', foodCtr.listData);
 router.post('/save', foodCtr.save);
 router.post('/checkName', foodCtr.checkName);
-router.get('/save-data', foodCtr.saveData);
 router.get('/recommend/:id', foodCtr.recommend);
 router.get('/valid/:id', foodCtr.valid);
 router.get('/del/:id', foodCtr.del);

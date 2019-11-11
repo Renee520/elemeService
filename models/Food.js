@@ -3,10 +3,10 @@ const { Schema } = mongoose;
 const { ObjectId } = mongoose.Types;
 
 const foodSchema = new Schema({
-  menu: {
+  menus: [{
     type: ObjectId,
     ref: 'FoodMenu',
-  },
+  }],
   store: {
     type: ObjectId,
     ref: 'Store',
@@ -23,6 +23,8 @@ const foodSchema = new Schema({
   },
   quantity: Number,
   feedstock: String, // 主要原料
+  rate: Number, // 好评率
+  monthSales: Number, // 月售
   recommend: {  // 店长推荐
     type: Boolean,
     default: false,

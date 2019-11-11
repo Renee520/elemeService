@@ -5,5 +5,7 @@ var indexCtr = require('../../portal-controllers/index');
 router.get('/', indexCtr.index);
 router.get('/remove', indexCtr.remove);
 router.get('/createdShopData', indexCtr.createdShopData);
+router.get('/createdMenuData', indexCtr.createdMenuData);
+router.get('/createdFoodData', indexCtr.createdFoodData);
 
 module.exports = router;

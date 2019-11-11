@@ -1,4 +1,5 @@
 var User = require('../models/User');
+var Address = require('../models/Address');
 var MobileCode = require('../models/MobileCode');
 var util = require('../util');
 var moment = require('moment');
@@ -66,6 +67,43 @@ function login(req, res, next) {
   );
 };
 
+function address(req, res) {
+  const { userId } = req.query;
+  Address.find({
+    user: userId
+  }).then(
+    r => {
+      res.json({
+        status: 1,
+        data: r
+      })
+    },
+    err => res.json({
+      status: 0,
+      msg: err
+    })
+  )
+}
+
+function removeAddress() {
+  const { userId, id } = req.query;
+  Address.findOneAndDelete({
+    user: userId,
+    _id: id
+  }).then(
+    r => {
+      res.json({
+        status: 1,
+        data: r
+      })
+    },
+    err => res.json({
+      status: 0,
+      msg: err
+    })
+  )
+}
+
 function register(mobile, name = '') {
   let userName = name;
   if (!name) {
@@ -82,4 +120,6 @@ function register(mobile, name = '') {
 module.exports = {
   login,
   index,
+  address, // 获取当前地址
+  removeAddress,
 };

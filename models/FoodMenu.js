@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const { ObjectId } = mongoose.Types;
 
-const foodMenuSchema = new Schema({
+const addressSchema = new Schema({
   name: String,
   description: String,
   index: {
@@ -20,5 +20,5 @@ const foodMenuSchema = new Schema({
   
 }, { timestamps: true });
 
-const FoodMenu = mongoose.model('FoodMenu', foodMenuSchema);
-module.exports =  FoodMenu;
+const Address = mongoose.model('Address', addressSchema);
+module.exports =  Address;

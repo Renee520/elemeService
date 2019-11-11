@@ -25,38 +25,42 @@ function listData(req, res, next) {
   let sort = util.orderFormat(order, req.query.columns);
 
   let searchKey = {};
-  const reg = new RegExp(search.value, 'i');
-  if (search.value) {
+  if (search && search.value) {
+    const reg = new RegExp(search.value, 'i');
     searchKey = {'name': { $regex : reg }}
   }
   if (shopId) {
     searchKey.store = shopId;
   }
-
-  let count = 0;
-  FoodMenu.count().then(
-    r => {
-      count = r;
-      return FoodMenu.find(searchKey).skip(Number(start)).limit(Number(length)).populate('store').sort(sort);
-    },
-    err => Promise.reject(err)
-  ).then(
-    r => {
-      res.json({
-        status: 1,
-        draw, 
-        data: r,
-        recordsFiltered: r.length,
-        recordsTotal: count,
-      })
-    },
-    err => {
-      res.json({
-        status: 0,
-        data: []
-      })
-    }
-  )
+  try {
+    
+    let count = 0;
+    FoodMenu.count().then(
+      r => {
+        count = r;
+        return FoodMenu.find(searchKey).skip(Number(start)).limit(Number(length)).populate('store').sort(sort);
+      },
+      err => Promise.reject(err)
+    ).then(
+      r => {
+        res.json({
+          status: 1,
+          draw, 
+          data: r,
+          recordsFiltered: r.length,
+          recordsTotal: count,
+        })
+      },
+      err => {
+        res.json({
+          status: 0,
+          data: []
+        })
+      }
+    )
+  } catch (error) {
+    console.log(error);
+  }
 };
 function form(req, res, next) {
   var { storeId, id } = req.params;
@@ -197,9 +201,12 @@ function getFoodByMenu(req, res, next) {
     })
   }
   Food.find({
-    menu: menuId
+    menus: {
+      $in: [menuId]
+    }
   }).then(
     r => {
+      console.log(r);
       res.json({
         status: 1,
         data: r

@@ -31,12 +31,11 @@ function listData(req, res, next) {
   if (shopId) {
     searchKey.store = shopId;
   }
-  console.log(searchKey);
   let count = 0;
   Food.count().then(
     r => {
       count = r;
-      return Food.find(searchKey).skip(Number(start)).limit(Number(length)).populate('store menu').sort(sort);
+      return Food.find(searchKey).skip(Number(start)).limit(Number(length)).populate('store menus').sort(sort);
     },
     err => Promise.reject(err)
   ).then(
@@ -85,49 +84,65 @@ function form(req, res, next) {
     err => Promise.reject(err)
   ).then(
     food => {
-      res.render('food/foodForm', {shopStr: JSON.stringify(shop), shop, food, menus});
+      res.render('food/foodForm', {shopStr: JSON.stringify({_id: shop._id, name: shop.name}), shop, food});
     },
     err => res.render('error', {msg: err})
   )
 };
+
 function save(req, res, next) {
-  const { id } = req.body;
-  if (!req.body.store) {
-    return res.json({
-      status: 0,
-      msg: '请选择商店',
-    })
-  }
-  let data = req.body;
-  data.valid = util.checkboxValue(data.valid, 'number');
-  data.recommend = util.checkboxValue(data.recommend);
-  if (!id) {
-    const food = new Food(data);
-    food.save().then(
-      r => {
-        res.json({
-          status: 1
+  try {
+    let { id, menus } = req.body;
+    if (!req.body.store || !menus) {
+      return res.json({
+        status: 0,
+        msg: '请检查商店或菜单是否选择',
+      })
+    }
+    console.log(menus, typeof menus);
+    menus = JSON.parse(menus);
+    if (!menus.length) {
+      return res.json({
+        status: 0,
+        msg: '请选择菜单',
+      });
+    }
+    let data = req.body;
+    data.valid = util.checkboxValue(data.valid, 'number');
+    data.recommend = util.checkboxValue(data.recommend);
+    data.menus = menus.map(item => item.id);
+    console.log(data);
+    if (!id) {
+      const food = new Food(data);
+      food.save().then(
+        r => {
+          res.json({
+            status: 1
+          })
+        },
+        err => res.json({
+          status: 0,
+          msg: err
         })
-      },
-      err => res.json({
-        status: 0,
-        msg: err
-      })
-    )
-  } else {
-    Food.findOneAndUpdate({
-      _id: id,
-    }, {
-      '$set': data,
-    }).then(
-      r => res.json({
-        status: 1
-      }),
-      err => res.json({
-        status: 0,
-        msg: err
-      })
-    )
+      )
+    } else {
+      Food.findOneAndUpdate({
+        _id: id,
+      }, {
+        '$set': data,
+      }).then(
+        r => res.json({
+          status: 1
+        }),
+        err => res.json({
+          status: 0,
+          msg: err
+        })
+      )
+    }
+    
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -158,19 +173,6 @@ function checkName(req, res, next) {
     }
   )
   
-}
-
-function saveData(req, res, next) {
-  Store.remove().then(
-    () => {
-      Store.collection.insert(data, function(err, dos) {
-        res.redirect('/portal/shop/list')
-      })
-    },
-    err => {
-      res.redirect('/portal/shop/list')
-    }
-  )
 }
 
 function valid(req, res, next) {
@@ -236,7 +238,6 @@ module.exports = {
   save,
   checkName,
   listData,
-  saveData,
   valid,
   recommend,
   del,

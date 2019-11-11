@@ -1,6 +1,9 @@
 var Store = require('../models/Store');
 var Activity = require('../models/Activity');
+var FoodMenu = require('../models/FoodMenu');
+var Food = require('../models/Food');
 var shopData = require('../data/shop');
+var foodData = require('../data/food');
 
 function index (req, res) {
   res.render('create')
@@ -72,7 +75,7 @@ function createdShopData(req, res) {
           activity.iconSingleName = item.icon_name;
           activity.iconName = setIconName(item.icon_name);
           activity.iconSingleBg = item.icon_color;
-          activity.exclusiveFood = item.is_exclusive_with_food_activity;
+          activity.exclusiveFood = item.is_exclusive_with_food_activity || false;
           
           // 规则
           if (activity.exclusiveFood) {
@@ -85,6 +88,8 @@ function createdShopData(req, res) {
               }
               activity.attribute = JSON.stringify(a);
             }
+          } else {
+            activity.attribute = '';
           }
           // 新用户
           activity.newUserOfSystem = /^新用户/.test(item.tips);
@@ -143,8 +148,96 @@ function setIconName(name) {
   return text;
 }
 
+function createdMenuData(req, res) {
+  let menuFns = [];
+  // let foodFns = [];
+  try {
+    Store.findOne().then(
+      store => {
+        if (store) {
+          for(let i = 0; i < foodData.length; i ++) {
+            const menu = foodData[i];
+            let data = {};
+            data.name = menu.name;
+            data.description = menu.description;
+            data.index = menu.index;
+            data.store = store._id;
+            const menuModule = new FoodMenu(data);
+            menuFns.push(menuModule.save());
+          }
+        }
+        console.log(menuFns.length);
+        // return Promise.all(menuFns);
+      },
+      err => {
+        console.log('创建失败：', err);
+      }
+    ).finally(() => {
+      res.render('create')
+    })
+    
+  } catch (error) {
+      console.log(error);
+  }
+}
+
+function createdFoodData(req, res) {
+  try {
+    let menus = {};
+    let foods = [];
+    FoodMenu.find().then(
+      r => {
+        for(let i = 0; i < foodData.length; i ++) {
+          const menu = r.filter(item => item.name === foodData[i].name)[0];
+          console.log(menu);
+          for(let j=0; j<foodData[i].foods.length; j ++) {
+            const food = foodData[i].foods[j];
+            if (!menus[food.vfood_id]) {
+              let data = {};
+              menus[food.vfood_id] = [menu._id];
+              data.menus = [menu._id];
+              data.store = menu.store;
+              data.description = food.description;
+              data.name = food.name;
+              data.hotLevel = Math.random() > 0.9 ? 1 : 0;
+              data.price = food.lowest_price;
+              data.quantity = 100;
+              data.feedstock = food.materials;
+              data.rate = food.satisfy_rate;
+              data.monthSales = food.month_sales;
+              data.recommend = Math.random() > 0.7 ? true : false;
+              foods.push(data);
+            } else {
+              menus[food.vfood_id].push(menu._id);
+              let data = foods.filter(item => item.name === food.name)[0];
+              console.log(data);
+              if (data) {
+                data.menus.push(menu._id);
+              }
+            }
+          }
+        }
+        console.log('====', foods);
+        return Food.insertMany(foods);
+      },
+      err => Promise.reject(err)
+    ).then(
+      r => {
+        console.log(r);
+      }
+    ).finally(() => {
+      res.render('create')
+    })
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   createdShopData,
+  createdMenuData, // 菜单
+  createdFoodData, // 食物
   index,
   remove,
 };

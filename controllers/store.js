@@ -1,4 +1,5 @@
 var Store = require('../models/Store');
+var FoodMenu = require('../models/FoodMenu');
 var Activity = require('../models/Activity');
 var moment = require('moment');
 // var async = require('async');
@@ -109,6 +110,41 @@ function getStore(req, res) {
   // )
 }
 
+function getStoreById(req, res) {
+  const storeId = req.params.id;
+  FoodMenu.findOne().then(
+    r => {
+      console.log(re);
+      // 用默认id
+      return FoodMenu.aggregate([
+        { $match: {
+          store: r.store
+        }},
+        {
+          $lookup: {
+            from: 'foods',  // 从哪个Schema中查询（一般需要复数，除非声明Schema的时候专门有处理）
+            localField: '_id',  // 本地关联的字段
+            foreignField: 'menus', // user中用的关联字段
+            as: 'foods' // 查询到所有user后放入的字段名，这个是自定义的，是个数组类型。
+          }
+        }
+      ])
+    },
+    err => Promise.reject(err)
+  ).then(
+    r => {
+      res.json({
+      status: 1,
+      data: r,
+    })},
+    err => res.json({
+      status: 0,
+      msg: err,
+    })
+  )
+}
+
 module.exports = {
   getStore,
+  getStoreById,
 };
