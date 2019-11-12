@@ -4,7 +4,7 @@ const { ObjectId } = mongoose.Types;
 
 const foodMenuSchema = new Schema({
   username: String,
-  sex: Number, // 性别
+  sex: Number, // 性别 1:男 0：女
   mobile: String,
   address: String,  // 地址
   addressDetail: String,  // 门牌号

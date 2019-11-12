@@ -6,5 +6,6 @@ router.get('/', userCtr.index);
 router.post('/login', userCtr.login);
 router.get('/address', userCtr.address);
 router.get('/removeAddress', userCtr.removeAddress);
+router.post('/setAddress', userCtr.setAddress);
 
 module.exports = router;

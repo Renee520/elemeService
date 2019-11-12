@@ -91,7 +91,7 @@ function removeAddress() {
     user: userId,
     _id: id
   }).then(
-    r => {
+    r => { 
       res.json({
         status: 1,
         data: r
@@ -116,10 +116,56 @@ function register(mobile, name = '') {
   return user.save();
 }
 
+function setAddress(req, res) {
+  const data = req.body;
+  if (!data.userId) {
+    return res.json({
+      status: 0,
+      msg: '请登录'
+    })
+  }
+  if (!data.mobile || !util.isMobile(data.mobile)) {
+    return res.json({
+      status: 0,
+      msg: '请输入正确的手机号'
+    })
+  }
+  if (!data.address) {
+    return res.json({
+      status: 0,
+      msg: '请输入地址'
+    })
+  }
+
+  User.findById(data.userId).then(
+    r => {
+      if (r) {
+        data.user = data.userId;
+        delete data.user;
+        const address = new Address(data);
+        return address.save()
+      }
+      return Promise.reject('未找到用户')
+    },
+    err => Promise.reject(err)
+  ).then(
+    r => {
+      res.json({
+        status: 1,
+      })
+    },
+    err = res.json({
+      status: 0,
+      msg: err
+    })
+  );
+}
+
 
 module.exports = {
   login,
   index,
   address, // 获取当前地址
   removeAddress,
+  setAddress, // 保存地址
 };
