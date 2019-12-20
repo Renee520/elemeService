@@ -65,7 +65,7 @@ function listData(req, res, next) {
         status: 1,
         draw, 
         data: r,
-        recordsFiltered: r.length,
+        recordsFiltered: count,
         recordsTotal: count,
       })
     },

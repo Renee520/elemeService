@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const { ObjectId } = mongoose.Types;
 
-const foodMenuSchema = new Schema({
+const addressSchema = new Schema({
   username: String,
   sex: Number, // 性别 1:男 0：女
   mobile: String,
@@ -20,5 +20,5 @@ const foodMenuSchema = new Schema({
   
 }, { timestamps: true });
 
-const FoodMenu = mongoose.model('FoodMenu', foodMenuSchema);
-module.exports =  FoodMenu;
+const Address = mongoose.model('Address', addressSchema);
+module.exports =  Address;

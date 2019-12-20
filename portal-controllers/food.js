@@ -6,7 +6,8 @@ var FoodMenu = require('../models/FoodMenu');
 function index(req, res, next) {
   var storeId = req.params.storeId;
   if (!storeId) {
-    return res.render('error', { msg: '请选择门店' });
+    // return res.render('error', { msg: '请选择门店' });
+    return res.render('food/foodList', { shop: null });
   }
   let store = {};
   Store.findById(storeId).then(
@@ -34,21 +35,24 @@ function listData(req, res, next) {
   let count = 0;
   Food.count().then(
     r => {
+      
       count = r;
       return Food.find(searchKey).skip(Number(start)).limit(Number(length)).populate('store menus').sort(sort);
     },
     err => Promise.reject(err)
   ).then(
     r => {
+      console.log('------',searchKey, r);
       res.json({
         status: 1,
         draw, 
         data: r,
-        recordsFiltered: r.length,
+        recordsFiltered: count,
         recordsTotal: count,
       })
     },
     err => {
+      console.log(err);
       res.json({
         status: 0,
         data: []

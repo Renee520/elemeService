@@ -117,48 +117,55 @@ function register(mobile, name = '') {
 }
 
 function setAddress(req, res) {
-  const data = req.body;
-  if (!data.userId) {
-    return res.json({
-      status: 0,
-      msg: '请登录'
-    })
-  }
-  if (!data.mobile || !util.isMobile(data.mobile)) {
-    return res.json({
-      status: 0,
-      msg: '请输入正确的手机号'
-    })
-  }
-  if (!data.address) {
-    return res.json({
-      status: 0,
-      msg: '请输入地址'
-    })
-  }
 
-  User.findById(data.userId).then(
-    r => {
-      if (r) {
-        data.user = data.userId;
-        delete data.user;
-        const address = new Address(data);
-        return address.save()
-      }
-      return Promise.reject('未找到用户')
-    },
-    err => Promise.reject(err)
-  ).then(
-    r => {
-      res.json({
-        status: 1,
+  try {
+    
+    const data = req.query;
+    console.log(req.query);
+    if (!data.userId) {
+      return res.json({
+        status: 0,
+        msg: '请登录'
       })
-    },
-    err = res.json({
-      status: 0,
-      msg: err
-    })
-  );
+    }
+    if (!data.mobile || !util.isMobile(data.mobile)) {
+      return res.json({
+        status: 0,
+        msg: '请输入正确的手机号'
+      })
+    }
+    if (!data.address) {
+      return res.json({
+        status: 0,
+        msg: '请输入地址'
+      })
+    }
+  
+    User.findById(data.userId).then(
+      r => {
+        if (r) {
+          data.user = data.userId;
+          delete data.user;
+          const address = new Address(data);
+          return address.save()
+        }
+        return Promise.reject('未找到用户')
+      },
+      err => Promise.reject(err)
+    ).then(
+      r => {
+        res.json({
+          status: 1,
+        })
+      },
+      err => res.json({
+        status: 0,
+        msg: err
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 

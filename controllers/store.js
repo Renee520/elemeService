@@ -114,7 +114,6 @@ function getStoreById(req, res) {
   const storeId = req.params.id;
   FoodMenu.findOne().then(
     r => {
-      console.log(re);
       // 用默认id
       return FoodMenu.aggregate([
         { $match: {

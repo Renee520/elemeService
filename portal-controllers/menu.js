@@ -5,9 +5,9 @@ var Food = require('../models/Food');
 
 function index(req, res, next) {
   var storeId = req.params.storeId;
-  console.log('==============', storeId);
   if (!storeId) {
-    return res.render('error', { msg: '请选择门店' });
+    // return res.render('error', { msg: '请选择门店' });
+    return res.render('menu/menuList', { shop: null });
   }
   let store = {};
   Store.findById(storeId).then(
@@ -47,7 +47,7 @@ function listData(req, res, next) {
           status: 1,
           draw, 
           data: r,
-          recordsFiltered: r.length,
+          recordsFiltered: count,
           recordsTotal: count,
         })
       },
@@ -65,7 +65,7 @@ function listData(req, res, next) {
 function form(req, res, next) {
   var { storeId, id } = req.params;
   let shop = {};
-  if (!storeId) {
+  if (!storeId || storeId == 0) {
     return res.render('error', {msg: '请选择门店'})
   }
   Store.findById(storeId).then(

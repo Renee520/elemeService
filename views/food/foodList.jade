@@ -58,6 +58,9 @@ block append scripts
             targets: 2,
             data: 'store.name',
             title: "所属门店",
+            render: function (data, type, row, meta) {
+              return '<a href="/portal/food/form/'+row.store._id+'">'+ data +'</a>';
+            }
           },
           {
             targets: 3,

@@ -18,7 +18,7 @@ window.dataTableOptions = {
   "dom": "<'row'<'col-md-6'l<'#toolbar'>><'col-md-6'f>r>" +
         "t" +
         "<'row'<'col-md-5 sm-center'i><'col-md-7 text-right sm-center'p>>",
-  "pageLength": 100,
+  "pageLength": 10,
   "pagingType": "full_numbers",
   "language": {
     "sProcessing": "处理中...",
