@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 const { ObjectId } = mongoose.Types;
 
 const foodMenuSchema = new Schema({
-  name: String,
+  name: String, // test
   description: String,
   index: {
     type: Number,
